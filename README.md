@@ -35,6 +35,13 @@ ed7d84c EXAM-1234: This is another example message (EXAM-1234 : In Progress).
 5a1c5b5 This is a message that doesn't follow the pattern.
 ```
 
+Grabbing tickets for use in a `git rebase`.
+
+```
+$ git jira-status EXAM develop~4 develop | tail -r | egrep -iv '(Reopened|In Progress|QA|Ready for QA|Code review)'
+5f393e3 (develop) EXAM-5678: This is an example commit message (EXAM-5678 : UAT Release Queue).
+```
+
 ## Checking overlap of git changes
 
 Shows you which commits in a range have shared file modifications with one another.
