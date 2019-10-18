@@ -23,6 +23,12 @@ ed7d84c EXAM-1234: This is another example message.
 5a1c5b5 This is a message that doesn't follow the pattern.
 
 $ git jira-status EXAM develop~4 develop
+Parses git logs for messages that match the pattern "PROJ-1234: Lorem ipsum..."
+It adds the JIRA status for these tickets to the output.
+
+Showing logs from develop~4 to develop.
+Looking for messages matching EXAM-1234.
+
 5f393e3 (develop) EXAM-5678: This is an example commit message (EXAM-5678 : UAT Release Queue).
 c598933 Merge branch 'hotfix'
 ed7d84c EXAM-1234: This is another example message (EXAM-1234 : In Progress).
