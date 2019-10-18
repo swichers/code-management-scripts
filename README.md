@@ -6,9 +6,9 @@ process.
 
 ## Installation
 
-Clone the repository locally, and add the folder to your `$PATH`. To add
-the git-enabled commands to git ensure that the git folder is accessible to your
-`$PATH` as well.
+1. Clone the repository locally
+2. If you want to use the scripts directly, add the `bin` folder to your `$PATH`.
+3. If you want to use the git integration, add the `git` folder to your `$PATH`.
 
 ## Checking Jira status of tickets
 

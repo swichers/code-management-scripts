@@ -8,4 +8,4 @@
 # Example:
 #  git overlap develop feature/my-new-feature
 
-. "${BASH_SOURCE%/*}/../$(basename $BASH_SOURCE).sh"
+. "${BASH_SOURCE%/*}/../bin/$(basename $BASH_SOURCE).sh"

@@ -8,4 +8,4 @@
 # Example:
 #  git release-notes develop release/2.4.2
 
-. "${BASH_SOURCE%/*}/../$(basename $BASH_SOURCE).sh"
+. "${BASH_SOURCE%/*}/../bin/$(basename $BASH_SOURCE).sh"

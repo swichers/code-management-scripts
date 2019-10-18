@@ -8,4 +8,4 @@
 # Example:
 #  git jira-status EXAM 2.4.2 HEAD
 
-. "${BASH_SOURCE%/*}/../$(basename $BASH_SOURCE).sh"
+. "${BASH_SOURCE%/*}/../bin/$(basename $BASH_SOURCE).sh"
