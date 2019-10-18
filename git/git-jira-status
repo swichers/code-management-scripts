@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Wrapper script to assist in using the Jira status script.
+#
+# Usage:
+#  git jira-status project_code start_ref end_ref
+#
+# Example:
+#  git jira-status EXAM 2.4.2 HEAD
+
+. "${BASH_SOURCE%/*}/../$(basename $BASH_SOURCE).sh"

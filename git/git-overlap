@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Wrapper script to assist in using the overlap script.
+#
+# Usage:
+#  git overlap start_commit end_commit
+#
+# Example:
+#  git overlap develop feature/my-new-feature
+
+. "${BASH_SOURCE%/*}/../$(basename $BASH_SOURCE).sh"
