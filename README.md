@@ -1,6 +1,6 @@
 # Code Management Scripts
 
-This is a collection of scripts I use while reviewing and building deployments.
+This is a collection of scripts I use while reviewing and managing code.
 They are primarily cenetered around code deployments and streamlining that
 process.
 
@@ -12,7 +12,8 @@ the git-enabled commands to git ensure that the git folder is accessible to your
 
 ## Checking Jira status of tickets
 
-Gets the Jira status of tickets pulled from Git logs. This requires installation and configuration of the [Jira CLI](https://github.com/foxythemes/jira-cli).
+Gets the Jira status of tickets pulled from Git logs. This requires installation
+and configuration of the [Jira CLI](https://github.com/foxythemes/jira-cli).
 
 ```
 $ git log --oneline develop~4..develop
@@ -30,7 +31,16 @@ ed7d84c EXAM-1234: This is another example message (EXAM-1234 : In Progress).
 
 ## Checking overlap of git changes
 
-Compares two reference points and identfies overlapping file changes.
+Shows you which commits in a range have shared file modifications with one another.
+
+e.g. A:foo,bar, B:foo, C:bar, D:fizzbuzz, E:fizzbuzz,foo
+
+* B needs A
+* C needs A
+* D needs nothing
+* E needs D, B, A
+
+It was created to illustrate problems with developer workflow.
 
 ```
 $ git overlap develop feature/EXAM-168
