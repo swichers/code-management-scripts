@@ -4,13 +4,11 @@
 #
 # Requires JIRA CLI to be installed: https://github.com/foxythemes/jira-cli
 #
-# TODO: Add reverse option for output. Using tail -r will block ticket output
-# until the task is complete.
 # TODO: Add option to filter by JIRA status. Can use grep to do this already.
 #
 # Filter by issue status
-# Prod grep: egrep -iv '(UAT Release Queue|Reopened|In Progress|QA|Ready for QA|UAT|Code review)'
-# UAT grep: egrep -iv '(Reopened|In Progress|QA|Ready for QA|Code review)'
+# Prod grep: egrep -iv '(UAT Release Queue|Reopened|In Progress|QA|Ready for QA|UAT|Code review)\)$'
+# UAT grep: egrep -iv '(New|Reopened|In Progress|QA|Ready for QA|Code review)\)$'
 #
 # Usage:
 #  git-jira-status.sh project_code start_ref end_ref
@@ -22,38 +20,88 @@
 
 set -euo pipefail
 
-USAGE="PROJECT_CODE START_REF END_REF"
+USAGE="[-hrs] PROJ_CODE START_REF END_REF"
+
+REVERSE_OUTPUT=0
+STRIP_COLORS=0
+
+while getopts ":hrs" opt; do
+  case ${opt} in
+    r )
+      REVERSE_OUTPUT=1
+      ;;
+    s )
+      STRIP_COLORS=1
+      ;;
+
+    h )
+      echo 'Usage:'
+      echo '  git jira-status [-hrs] PROJ_CODE START_REF END_REF'
+      echo '    PROJ_CODE   The Jira project code.'
+      echo '    START_REF   The starting Git reference.'
+      echo '    END_REF     The ending Git reference.'
+      echo '    -h          Display this help message.'
+      echo '    -r          Reverse Git log output.'
+      echo '    -s          Strip color from output.'
+      exit 0
+      ;;
+    \? )
+      echo "Invalid Option: -$OPTARG" 1>&2
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
 
 PROJ_TOKEN=$(echo -n "${1-}" | tr '[:lower:]' '[:upper:]')
 START_REF="${2-}"
 END_REF="${3-}"
 
-COLOR_BOLD=$(tput bold)
-COLOR_RESET=$(tput sgr0)
-
-COLOR_FG_BLACK=$(tput setaf 0)
-COLOR_FG_RED=$(tput setaf 1)
-COLOR_FG_GREEN=$(tput setaf 2)
-COLOR_FG_YELLOW=$(tput setaf 3)
-COLOR_FG_BLUE=$(tput setaf 4)
-COLOR_FG_MAGENTA=$(tput setaf 5)
-COLOR_FG_CYAN=$(tput setaf 6)
-COLOR_FG_WHITE=$(tput setaf 7)
-
+readonly REVERSE_OUTPUT
+readonly STRIP_COLORS
 readonly USAGE
 readonly PROJ_TOKEN
 readonly START_REF
 readonly END_REF
-readonly COLOR_BOLD
-readonly COLOR_RESET
-readonly COLOR_FG_BLACK
-readonly COLOR_FG_RED
-readonly COLOR_FG_GREEN
-readonly COLOR_FG_YELLOW
-readonly COLOR_FG_BLUE
-readonly COLOR_FG_MAGENTA
-readonly COLOR_FG_CYAN
-readonly COLOR_FG_WHITE
+
+init_colors() {
+  COLOR_BOLD=$(tput bold)
+  COLOR_RESET=$(tput sgr0)
+
+  COLOR_FG_BLACK=$(tput setaf 0)
+  COLOR_FG_RED=$(tput setaf 1)
+  COLOR_FG_GREEN=$(tput setaf 2)
+  COLOR_FG_YELLOW=$(tput setaf 3)
+  COLOR_FG_BLUE=$(tput setaf 4)
+  COLOR_FG_MAGENTA=$(tput setaf 5)
+  COLOR_FG_CYAN=$(tput setaf 6)
+  COLOR_FG_WHITE=$(tput setaf 7)
+
+  if [ ${1} -eq 1 ]; then
+    COLOR_BOLD=''
+    COLOR_RESET=''
+
+    COLOR_FG_BLACK=''
+    COLOR_FG_RED=''
+    COLOR_FG_GREEN=''
+    COLOR_FG_YELLOW=''
+    COLOR_FG_BLUE=''
+    COLOR_FG_MAGENTA=''
+    COLOR_FG_CYAN=''
+    COLOR_FG_WHITE=''
+  fi
+
+  readonly COLOR_BOLD
+  readonly COLOR_RESET
+  readonly COLOR_FG_BLACK
+  readonly COLOR_FG_RED
+  readonly COLOR_FG_GREEN
+  readonly COLOR_FG_YELLOW
+  readonly COLOR_FG_BLUE
+  readonly COLOR_FG_MAGENTA
+  readonly COLOR_FG_CYAN
+  readonly COLOR_FG_WHITE
+}
 
 jira_colorize_status() {
   local jira_status
@@ -188,6 +236,7 @@ print_log_item() {
 }
 
 _main() {
+  init_colors ${STRIP_COLORS}
   require_jira_cli
   require_work_tree
   require_project_token "${PROJ_TOKEN}"
@@ -195,6 +244,10 @@ _main() {
   show_intro "${PROJ_TOKEN}" "${START_REF}" "${END_REF}"
 
   git_commits=$(git log --pretty='format:%h %s' --abbrev=8 "${START_REF}".."${END_REF}")
+
+  if [ $REVERSE_OUTPUT -eq 1 ]; then
+    git_commits=$(echo "${git_commits}" | tail -r)
+  fi
 
   while read -r LINE; do
     print_log_item "${PROJ_TOKEN}" "${LINE}"
