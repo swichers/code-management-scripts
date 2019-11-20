@@ -55,7 +55,7 @@ shift $((OPTIND -1))
 
 PROJ_TOKEN=$(echo -n "${1-}" | tr '[:lower:]' '[:upper:]')
 START_REF="${2-}"
-END_REF="${3-}"
+END_REF="${3-HEAD}"
 
 readonly REVERSE_OUTPUT
 readonly STRIP_COLORS
