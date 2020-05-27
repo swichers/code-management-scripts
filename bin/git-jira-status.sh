@@ -105,7 +105,7 @@ init_colors() {
 
 jira_colorize_status() {
   local jira_status
-  jira_status=$(echo -n "$@" | sed 's/ (cached)//' | tr '[:upper:]' '[:lower:]')
+  jira_status=$(echo -n "$@" | tr '[:upper:]' '[:lower:]')
   case $jira_status in
     new | discovery | 'story approval')
       echo -n "${COLOR_FG_RED}$@${COLOR_RESET}"
@@ -191,26 +191,14 @@ jira_get_issue_from_log() {
 jira_get_issue_status() {
   local jira_status
   local jira_id
-  local cache_id
-  local varname
+  local ticket_summary
 
-  jira_status=''
   jira_id="${1}"
-  cache_id=$(echo -n "${jira_id}" | tr '-' '_')
+  ticket_summary=$(jira i "${jira_id}")
 
-  # Caching no longer works since moving this to a subshell call.
-  declare "FAKE_CACHE_${cache_id}"
-  varname="FAKE_CACHE_${cache_id}"
-
-  if [ "${!varname}" ]; then
-    jira_status="${!varname} (cached)"
-  else
-    jira_status=$(jira i "${jira_id}" | \
-      sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' | \
-                                       awk -F '[[:space:]][[:space:]]+' '//{printf $3}')
-    declare "FAKE_CACHE_${cache_id}=${jira_status}"
-  fi
-
+  jira_status=$(echo -n "${ticket_summary}" | \
+    sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' | \
+                                      awk -F '[[:space:]][[:space:]]+' '//{printf $3}')
   echo -n "${jira_status}"
 }
 
