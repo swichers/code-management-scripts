@@ -181,7 +181,7 @@ jira_get_issue_from_log() {
   # Normalize the log message.
   jira_id=$(echo -n "${2}" | tr '[:lower:]' '[:upper:]')
   # Ensure it matches our EXAM 1234 or EXAM-1234 pattern.
-  jira_id=$(echo -n "${jira_id}" | awk "toupper(\$0) ~ /^${1}[ -][0-9]+/{printf \$0}")
+  jira_id=$(echo -n "${jira_id}" | awk "toupper(\$0) ~ /^${1}[ -][0-9]+/{print \$0}")
   # Convert EXAM 1234 to EXAM-1234 and filter out EXAM-0.
   jira_id=$(echo -n "${jira_id}" | sed -E -e "s/^${1}[ -]([0-9]+).+/${1}-\1/" -e "s/^${1}-[0]+//")
 
@@ -198,7 +198,7 @@ jira_get_issue_status() {
 
   jira_status=$(echo -n "${ticket_summary}" | \
     sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' | \
-                                      awk -F '[[:space:]][[:space:]]+' '//{printf $3}')
+                                      awk -F '[[:space:]][[:space:]]+' '//{print $3}')
   echo -n "${jira_status}"
 }
 
