@@ -10,6 +10,7 @@ folder for more information and see the [bin](bin) folder for available scripts.
 
 * Create simple release notes
 * View git history with Jira status
+* Create a release branch based on Jira status
 * Check file relationship between chains of commits
 
 ## Requirements
