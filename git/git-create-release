@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Wrapper script to assist in creating release branches.
+#
+# Usage:
+#  git create-release project_code start_ref end_ref
+#
+# Example:
+#  git create-release EXAM 2.4.2 HEAD
+
+. "${BASH_SOURCE%/*}/../bin/$(basename $BASH_SOURCE)-branch.sh"

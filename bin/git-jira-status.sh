@@ -66,45 +66,6 @@ readonly PROJ_TOKEN
 readonly START_REF
 readonly END_REF
 
-init_colors() {
-  COLOR_BOLD=$(tput bold)
-  COLOR_RESET=$(tput sgr0)
-
-  COLOR_FG_BLACK=$(tput setaf 0)
-  COLOR_FG_RED=$(tput setaf 1)
-  COLOR_FG_GREEN=$(tput setaf 2)
-  COLOR_FG_YELLOW=$(tput setaf 3)
-  COLOR_FG_BLUE=$(tput setaf 4)
-  COLOR_FG_MAGENTA=$(tput setaf 5)
-  COLOR_FG_CYAN=$(tput setaf 6)
-  COLOR_FG_WHITE=$(tput setaf 7)
-
-  if [ "${1}" -eq 1 ]; then
-    COLOR_BOLD=''
-    COLOR_RESET=''
-
-    COLOR_FG_BLACK=''
-    COLOR_FG_RED=''
-    COLOR_FG_GREEN=''
-    COLOR_FG_YELLOW=''
-    COLOR_FG_BLUE=''
-    COLOR_FG_MAGENTA=''
-    COLOR_FG_CYAN=''
-    COLOR_FG_WHITE=''
-  fi
-
-  readonly COLOR_BOLD
-  readonly COLOR_RESET
-  readonly COLOR_FG_BLACK
-  readonly COLOR_FG_RED
-  readonly COLOR_FG_GREEN
-  readonly COLOR_FG_YELLOW
-  readonly COLOR_FG_BLUE
-  readonly COLOR_FG_MAGENTA
-  readonly COLOR_FG_CYAN
-  readonly COLOR_FG_WHITE
-}
-
 jira_colorize_status() {
   local jira_status
   jira_status=$(echo -n "$*" | tr '[:upper:]' '[:lower:]')
@@ -226,7 +187,7 @@ print_log_item() {
 }
 
 _main() {
-  init_colors ${STRIP_COLORS}
+  . "${SCRIPT_DIR}/colors.sh" ${STRIP_COLORS}
   require_jira_cli
   require_work_tree
   require_project_token "${PROJ_TOKEN}"
