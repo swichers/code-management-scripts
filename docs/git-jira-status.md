@@ -4,8 +4,8 @@ This script will parse Jira tickets from commit messages and display their Jira 
 
 ## Requirements
 
-  * [Jira CLI](https://github.com/foxythemes/jira-cli)
-  * Commit messages must be formatted in this specific way: `EXAM-000: An example commit message.` where EXAM is the Jira project code.
+* [Jira CLI](https://github.com/foxythemes/jira-cli)
+* Commit messages must be formatted in this specific way: `EXAM-000: An example commit message.` where EXAM is the Jira project code.
 
 ## Usage
 
@@ -62,18 +62,18 @@ $ git jira-status -rs EXAM develop~4 develop | egrep -iv '(New|Reopened|In Progr
 
 When filtering a list of tickets to use in a `git rebase` it is very import to do a number of things:
 
-  * Reverse the output using `-r` so that the list is in an order `git rebase` expects.
+* Reverse the output using `-r` so that the list is in an order `git rebase` expects.
 
 `git log` is in newest-to-oldest order, but the sequence file from `git rebase` expects commits in `oldest-to-newest` order. Using the reverse flag enables you to quickly and easily use the output without having to manually reverse it.
 
-  * Strip colors using `-s` so that `grep`, `sed`, or any other tools work as expected.
+* Strip colors using `-s` so that `grep`, `sed`, or any other tools work as expected.
 
 The color codes embedded in the output can cause text matching to fail in unexpected ways. Stripping colors will ensure that `grep` and other utilities work as expected.
 
-  * When using `grep` it can be better to use an exclusion-based filter instead of an inclusion-based one. 
+* When using `grep` it can be better to use an exclusion-based filter instead of an inclusion-based one. 
 
 An inclusion-based filter will cause any non-conforming commits to be missed, an exclusion-based filter will include those in its output.
 
-  * When using `grep` it is very important to match the end of a line with the surrounding parens. 
+* When using `grep` it is very important to match the end of a line with the surrounding parens. 
 
 If the regex is too loose then you can include or exclude tickets by mistake when the status is found within the commit message. For example, if the Jira status you are trying to filter is "New" and you do not match parens and the end of line you may improperly filter out commits with the word "New" in the commit message.

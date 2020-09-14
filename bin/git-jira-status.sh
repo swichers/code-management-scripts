@@ -78,7 +78,7 @@ init_colors() {
   COLOR_FG_CYAN=$(tput setaf 6)
   COLOR_FG_WHITE=$(tput setaf 7)
 
-  if [ ${1} -eq 1 ]; then
+  if [ "${1}" -eq 1 ]; then
     COLOR_BOLD=''
     COLOR_RESET=''
 
