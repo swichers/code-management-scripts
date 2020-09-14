@@ -28,14 +28,14 @@ STRIP_COLORS=0
 
 while getopts ":hrs" opt; do
   case ${opt} in
-    r )
+    r)
       REVERSE_OUTPUT=1
       ;;
-    s )
+    s)
       STRIP_COLORS=1
       ;;
 
-    h )
+    h)
       echo 'Usage:'
       echo '  git jira-status [-hrs] PROJ_CODE START_REF END_REF'
       echo '    PROJ_CODE   The Jira project code.'
@@ -46,13 +46,13 @@ while getopts ":hrs" opt; do
       echo '    -s          Strip color from output.'
       exit 0
       ;;
-    \? )
+    \?)
       echo "Invalid Option: -$OPTARG" 1>&2
       exit 1
       ;;
   esac
 done
-shift $((OPTIND -1))
+shift $((OPTIND - 1))
 
 PROJ_TOKEN=$(echo -n "${1-}" | tr '[:lower:]' '[:upper:]')
 START_REF="${2-}"
@@ -155,7 +155,7 @@ require_project_token() {
 }
 
 require_git_refs() {
-  if [ -z "${1-}" ] || [ -z "${2-}" ];then
+  if [ -z "${1-}" ] || [ -z "${2-}" ]; then
     echo 'Must be given a start ref and end ref.' >&2
     echo >&2
     usage
@@ -197,9 +197,9 @@ jira_get_issue_status() {
   jira_id="${1}"
   ticket_summary=$(jira i "${jira_id}")
 
-  jira_status=$(echo -n "${ticket_summary}" | \
-    sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' | \
-                                      awk -F '[[:space:]][[:space:]]+' '//{print $3}')
+  jira_status=$(echo -n "${ticket_summary}" |
+    sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' |
+    awk -F '[[:space:]][[:space:]]+' '//{print $3}')
   echo -n "${jira_status}"
 }
 

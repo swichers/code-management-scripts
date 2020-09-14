@@ -20,7 +20,7 @@ if [[ -z "${1-}" ]] || [[ -z "${2-}" ]]; then
   usage
 fi
 
-git log --pretty='format:%s' "${1}".."${2}" | \
-  grep -Ev '^Merge (remote-tracking branch|branch|pull request)' | \
-  sort -ufds | \
+git log --pretty='format:%s' "${1}".."${2}" |
+  grep -Ev '^Merge (remote-tracking branch|branch|pull request)' |
+  sort -ufds |
   sed 's/^/* /'
