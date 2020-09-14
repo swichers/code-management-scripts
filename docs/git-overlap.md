@@ -3,15 +3,15 @@
 Checks the provided commit range to determine which commits modify files that were modified in an earlier commit. This is a very shallow check which does not account for functional or thematic dependencies. It should be considered a starting point for further investigation. It was created to illustrate problems with developer workflows not following proper branching techniques.
 
 e.g.
-* Commit 1
-  * foo.txt
-  * bar.txt
-* Commit 2
-  * bar.txt
-* Commit 3
-  * foo.txt
-* Commit 4
-  * foobar.txt
+  * Commit 1
+    * foo.txt
+    * bar.txt
+  * Commit 2
+    * bar.txt
+  * Commit 3
+    * foo.txt
+  * Commit 4
+    * foobar.txt
 
 Commit 2 will be considered dependent on Commit 1.
 
