@@ -4,12 +4,6 @@
 #
 # Requires JIRA CLI to be installed: https://github.com/foxythemes/jira-cli
 #
-# TODO: Add option to filter by JIRA status. Can use grep to do this already.
-#
-# Filter by issue status
-# Prod grep: egrep -iv '(UAT Release Queue|Reopened|In Progress|QA|Ready for QA|UAT|Code review)\)$'
-# UAT grep: egrep -iv '(New|Reopened|In Progress|QA|Ready for QA|Code review)\)$'
-#
 # Usage:
 #  git-jira-status.sh project_code start_ref end_ref
 #
