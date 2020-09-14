@@ -26,6 +26,5 @@ git clone git@github.com:swichers/code-management-scripts.git
 Add the scripts directory to your path. For example, in `~/.zshrc` you would add
 
 ```sh
-export PATH=path/to/code-management-scripts/bin:$PATH
+export PATH=path/to/code-management-scripts/git:$PATH
 ```
-
