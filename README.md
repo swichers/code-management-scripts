@@ -6,14 +6,14 @@ This repository features a number of scripts for streamlining code releases and 
 
 ## Functionality provided
 
-* Create simple release notes
-* View git history with Jira status
-* Check file relationship between chains of commits
+  * Create simple release notes
+  * View git history with Jira status
+  * Check file relationship between chains of commits
 
 ## Requirements
 
-* git
-* [Jira CLI](https://github.com/foxythemes/jira-cli) 
+  * git
+  * [Jira CLI](https://github.com/foxythemes/jira-cli)
 
 The scripts are best utilized by calling them through git, though they can technically be called directly. Jira CLI is a requirement when using the Jira related scripts.
 

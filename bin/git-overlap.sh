@@ -67,13 +67,13 @@ echo "${COMMITS[@]}" | indent
 echo
 echo
 
-for (( index = 0; index < $(($LEN-1)); index ++ )); do
+for (( index = 0; index < ($LEN-1); index ++ )); do
   declare -a DEPENDS_ON=()
   CURRENT="${COMMITS[ $index ]}"
 
   echo -n "Parent ${COLOR_BOLD}${COLOR_FG_YELLOW}${CURRENT}${COLOR_RESET} -> "
 
-  for (( child_index = $(($index + 1)); child_index < $LEN; child_index ++ )); do
+  for (( child_index = ($index + 1); child_index < $LEN; child_index ++ )); do
     CURRENT_CHILD="${COMMITS[$child_index]}"
     echo -n "${CURRENT_CHILD} "
 

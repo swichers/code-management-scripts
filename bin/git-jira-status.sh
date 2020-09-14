@@ -20,6 +20,7 @@
 
 set -euo pipefail
 
+# shellcheck disable=SC2034
 USAGE="[-hrs] PROJ_CODE START_REF END_REF"
 
 REVERSE_OUTPUT=0

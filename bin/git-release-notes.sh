@@ -14,6 +14,7 @@ set -euo pipefail
 
 require_work_tree
 
+# shellcheck disable=SC2034
 USAGE="START_REF END_REF"
 if [[ -z "${1-}" ]] || [[ -z "${2-}" ]]; then
   usage
