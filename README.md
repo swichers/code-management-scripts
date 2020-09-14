@@ -1,3 +1,5 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/90ae654e782f4665a030938f1960d20e)](https://www.codacy.com/manual/swichers/code-management-scripts?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=swichers/code-management-scripts&amp;utm_campaign=Badge_Grade)
+
 # Code Management Scripts
 
 This repository features a number of scripts for streamlining code releases and auditing. These are especially useful if you base your releases on Jira tickets.See the [docs](docs) folder for more information and see the [bin](bin) folder for available scripts.
