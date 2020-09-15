@@ -20,6 +20,7 @@ USAGE="[-hrs] PROJ_CODE START_REF END_REF"
 
 REVERSE_OUTPUT=0
 STRIP_COLORS=0
+SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 
 while getopts ":hrs" opt; do
   case ${opt} in
