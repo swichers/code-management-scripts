@@ -1,9 +1,9 @@
 # git-overlap
 
 Checks the provided commit range to determine which commits modify the same
-files that are also modified in earlier commits. This is a very shallow check
-which does not account for functional or thematic dependencies. It is a starting
-point for further investigation.
+files that are also modified in earlier commits. This is a shallow check which
+does not account for functional or thematic dependencies. It is a starting point
+for further investigation.
 
 e.g.
 * Commit 1
@@ -16,11 +16,11 @@ e.g.
 * Commit 4
   * foobar.txt
 
-Commit 2 will be considered dependent on Commit 1.
+Commit 2 is considered dependent on Commit 1.
 
-Commit 3 will be considered dependent on Commit 1, but not 2.
+Commit 3 is considered dependent on Commit 1, but not 2.
 
-Commit 4 will not be considered to have any dependencies.
+Commit 4 is not considered to have any dependencies.
 
 ## Usage
 

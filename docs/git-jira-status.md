@@ -7,7 +7,8 @@ status inline. This requires installation and configuration of the
 ## Requirements
 
 * [Jira CLI](https://github.com/foxythemes/jira-cli)
-* Commit messages must be formatted in this specific way: `EXAM-000: An example commit message.` where EXAM is the Jira project code.
+* Commit messages must be formatted in this specific way:
+`EXAM-000: An example commit message.` where EXAM is the Jira project code.
 
 ## Usage
 
@@ -36,7 +37,7 @@ from. This is optional and defaults to `HEAD`.
 
 ## Example
 
-### Viewing history without status:
+### Viewing history without status
 
 ```sh
 $ git log --oneline develop~4..develop
@@ -46,7 +47,7 @@ ed7d84c EXAM-1234: This is another example message.
 5a1c5b5 This is a message that doesn't follow the pattern.
 ```
 
-### The same information with status:
+### The same information with status
 
 ```sh
 $ git jira-status EXAM develop~4 develop
@@ -62,7 +63,7 @@ ed7d84c EXAM-1234: This is another example message (EXAM-1234 : In Progress)
 5a1c5b5 This is a message that doesn't follow the pattern.
 ```
 
-## Grabbing tickets for use in a `git rebase`.
+## Grabbing tickets for use in a `git rebase`
 
 ```sh
 $ git jira-status -rs EXAM develop~4 develop | egrep -iv '(New|Reopened|In Progress|QA|Ready for QA|Code review)\)$'
@@ -76,7 +77,7 @@ expects.
 
 `git log` is in newest-to-oldest order, but the sequence file from `git rebase`
 expects commits in `oldest-to-newest` order. Using the reverse flag enables you
-to easily use the output without having to manually reverse it.
+to use the output without having to manually reverse it.
 
 * Strip colors using `-s` so that `grep`, `sed`, or any other tools work as
 expected.
