@@ -56,10 +56,17 @@ declare -i LEN="${#COMMITS[@]}"
 
 indent() { sed 's/^/  /'; }
 
+git_file_list() {
+  git show --name-only "${1}" | tail -r | awk '1;/^$/{exit}' | awk 'NF' | sort
+}
+
 compare_commit_files() {
-  local PARENT_FILES=$(git show --name-only "${1}" | tail -r | awk '1;/^$/{exit}' | awk 'NF' | sort)
-  local CHILD_FILES=$(git show --name-only "${2}" | tail -r | awk '1;/^$/{exit}' | awk 'NF' | sort)
-  local MODIFIED=$(comm -12 <(echo "${PARENT_FILES}") <(echo "${CHILD_FILES}"))
+  local PARENT_FILES
+  local CHILD_FILES
+  local MODIFIED
+  PARENT_FILES=$(git_file_list "${1}")
+  CHILD_FILES=$(git_file_list "${2}")
+  MODIFIED=$(comm -12 <(echo "${PARENT_FILES}") <(echo "${CHILD_FILES}"))
   [[ "${MODIFIED}" ]]
 }
 
@@ -89,9 +96,9 @@ for ((index = 0; index < (LEN - 1); index++)); do
 
   echo
 
-  if [[ ${#DEPENDS_ON[@]} -gt 0 ]]; then
+  if [[ "${#DEPENDS_ON[@]}" -gt 0 ]]; then
     echo
-    echo "${COLOR_BOLD}${CURRENT} shares changes with ${DEPENDS_ON[@]}${COLOR_RESET}" | indent
+    printf "${COLOR_BOLD}%s shares changes with %s${COLOR_RESET}\n" "${CURRENT}" "${DEPENDS_ON[*]}" | indent
     echo
     for depend in "${DEPENDS_ON[@]}"; do
       git log --format=%B -n 1 "${depend}" | awk 'NF' | indent | indent
