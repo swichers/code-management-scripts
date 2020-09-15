@@ -7,6 +7,7 @@ status inline. This requires installation and configuration of the
 ## Requirements
 
 * [Jira CLI](https://github.com/foxythemes/jira-cli)
+
 * Commit messages must be formatted in this specific way:
 `EXAM-000: An example commit message.` where EXAM is the Jira project code.
 
