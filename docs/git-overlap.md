@@ -1,10 +1,9 @@
 # git-overlap
 
 Checks the provided commit range to determine which commits modify files that
- were modified in an earlier commit. This is a very shallow check which does not
- account for functional or thematic dependencies. It should be considered a
- starting point for further investigation. It was created to illustrate problems
- with developer workflows not following proper branching techniques.
+were modified in an earlier commit. This is a very shallow check which does not
+account for functional or thematic dependencies. It should be considered a
+starting point for further investigation.
 
 e.g.
 * Commit 1
@@ -30,11 +29,11 @@ git overlap START_COMMIT END_COMMIT
 ```
 
 **START_COMMIT** The starting commit hash, branch, or tag to begin reviewing
- commits from. This can be any valid identifier, including things such as `HEAD`
- or `mybranch~15`.
+commits from. This can be any valid identifier, including `HEAD` or
+`mybranch~15`.
 
 **END_COMMIT** The ending commit hash, branch, or tag to stop reviewing commits
- from.
+from.
 
 ## Example
 

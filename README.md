@@ -2,10 +2,9 @@
 
 # Code Management Scripts
 
-This repository features a number of scripts for streamlining code releases and
- auditing. These are especially useful if you base your releases on Jira
- tickets. See the [docs](docs) folder for more information and see the
- [bin](bin) folder for available scripts.
+This repository features scripts for streamlining code releases and auditing.
+These are useful if you base your releases on Jira tickets. See the [docs](docs)
+folder for more information and see the [bin](bin) folder for available scripts.
 
 ## Functionality provided
 
@@ -18,21 +17,19 @@ This repository features a number of scripts for streamlining code releases and
 * git
 * [Jira CLI](https://github.com/foxythemes/jira-cli)
 
-The scripts are best utilized by calling them through git, though they can
- technically be called directly. Jira CLI is a requirement when using the Jira
- related scripts.
+Jira CLI is a requirement when using the Jira related scripts.
 
 ## Installation
 
-Copy this repository locally. It's recommended to use git in order to make
- updating easier.
+Copy this repository locally. It's recommended to use git to make updating
+easier.
 
 ```sh
 git clone git@github.com:swichers/code-management-scripts.git
 ```
 
 Add the scripts directory to your path. For example, in `~/.zshrc` you would add
- the following code:
+the following code:
 
 ```sh
 export PATH=path/to/code-management-scripts/git:$PATH
