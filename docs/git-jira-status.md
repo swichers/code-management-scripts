@@ -1,6 +1,8 @@
 # git-jira-status
 
-This script will parse Jira tickets from commit messages and display their Jira status inline. This requires installation and configuration of the [Jira CLI](https://github.com/foxythemes/jira-cli).
+This script will parse Jira tickets from commit messages and display their Jira
+ status inline. This requires installation and configuration of the
+ [Jira CLI](https://github.com/foxythemes/jira-cli).
 
 ## Requirements
 
@@ -13,17 +15,24 @@ This script will parse Jira tickets from commit messages and display their Jira 
 git jira-status [-hrs] PROJECT_CODE START_COMMIT END_COMMIT
 ```
 
-**-h** Show help.
+**-h** Show help.
 
-**-r** Reverse the log output. This is useful for creating a list of commits for using in a `git rebase`.
+**-r** Reverse the log output. This is useful for creating a list of commits for
+ using in a `git rebase`.
 
-**-s** Strip color codes from the output. This is useful for modifying the output with something such as `grep` or `sed`.
+**-s** Strip color codes from the output. This is useful for modifying the
+ output with something such as `grep` or `sed`.
 
-**PROJECT_CODE** The Jira project code. This is the machine identifier used by Jira when creating issue links. For example, if the project is 'Code Management Scripts', the identifier might be 'CMS'.
+**PROJECT_CODE** The Jira project code. This is the machine identifier used by
+ Jira when creating issue links. For example, if the project is
+ 'Code Management Scripts', the identifier might be 'CMS'.
 
-**START_COMMIT** The starting commit hash, branch, or tag to begin reviewing commits from. This can be any valid identifier, including things such as `HEAD` or `mybranch~15`.
+**START_COMMIT** The starting commit hash, branch, or tag to begin reviewing
+ commits from. This can be any valid identifier, including things such as `HEAD`
+ or `mybranch~15`.
 
-**END_COMMIT** The ending commit hash, branch, or tag to stop reviewing commits from. This is optional and defaults to `HEAD`.
+**END_COMMIT** The ending commit hash, branch, or tag to stop reviewing commits
+ from. This is optional and defaults to `HEAD`.
 
 ## Example
 
@@ -60,20 +69,34 @@ $ git jira-status -rs EXAM develop~4 develop | egrep -iv '(New|Reopened|In Progr
 5f393e3 (develop) EXAM-5678: This is an example commit message (EXAM-5678 : UAT Release Queue).
 ```
 
-When filtering a list of tickets to use in a `git rebase` it is very import to do a number of things:
+When filtering a list of tickets to use in a `git rebase` it is very import to
+ do a number of things:
 
-* Reverse the output using `-r` so that the list is in an order `git rebase` expects.
+* Reverse the output using `-r` so that the list is in an order `git rebase`
+ expects.
 
-`git log` is in newest-to-oldest order, but the sequence file from `git rebase` expects commits in `oldest-to-newest` order. Using the reverse flag enables you to quickly and easily use the output without having to manually reverse it.
+`git log` is in newest-to-oldest order, but the sequence file from `git rebase`
+ expects commits in `oldest-to-newest` order. Using the reverse flag enables you
+ to quickly and easily use the output without having to manually reverse it.
 
-* Strip colors using `-s` so that `grep`, `sed`, or any other tools work as expected.
+* Strip colors using `-s` so that `grep`, `sed`, or any other tools work as
+ expected.
 
-The color codes embedded in the output can cause text matching to fail in unexpected ways. Stripping colors will ensure that `grep` and other utilities work as expected.
+The color codes embedded in the output can cause text matching to fail in
+ unexpected ways. Stripping colors will ensure that `grep` and other utilities
+ work as expected.
 
-* When using `grep` it can be better to use an exclusion-based filter instead of an inclusion-based one. 
+* When using `grep` it can be better to use an exclusion-based filter instead of
+ an inclusion-based one.
 
-An inclusion-based filter will cause any non-conforming commits to be missed, an exclusion-based filter will include those in its output.
+An inclusion-based filter will cause any non-conforming commits to be missed, an
+ exclusion-based filter will include those in its output.
 
-* When using `grep` it is very important to match the end of a line with the surrounding parens. 
+* When using `grep` it is very important to match the end of a line with the
+ surrounding parens.
 
-If the regex is too loose then you can include or exclude tickets by mistake when the status is found within the commit message. For example, if the Jira status you are trying to filter is "New" and you do not match parens and the end of line you may improperly filter out commits with the word "New" in the commit message.
+If the regex is too loose then you can include or exclude tickets by mistake
+ when the status is found within the commit message. For example, if the Jira
+ status you are trying to filter is "New" and you do not match parens and the
+ end of line you may improperly filter out commits with the word "New" in the
+ commit message.

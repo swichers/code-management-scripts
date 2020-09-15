@@ -1,6 +1,8 @@
 # git-release-notes
 
-Generates simple markdown formatted release notes based on git history. This is a "dumb" listing with minimal filtering. It will remove merge commit messages while sorting and cleaning up the output slightly.
+Generates simple markdown formatted release notes based on git history. This is
+ a "dumb" listing with minimal filtering. It will remove merge commit messages
+ while sorting and cleaning up the output slightly.
 
 ## Usage
 
@@ -8,9 +10,12 @@ Generates simple markdown formatted release notes based on git history. This is 
 git release-notes START_COMMIT END_COMMIT
 ```
 
-**START_COMMIT** The starting commit hash, branch, or tag to begin reviewing commits from. This can be any valid identifier, including things such as `HEAD` or `mybranch~15`.
+**START_COMMIT** The starting commit hash, branch, or tag to begin reviewing
+ commits from. This can be any valid identifier, including things such as `HEAD`
+ or `mybranch~15`.
 
-**END_COMMIT** The ending commit hash, branch, or tag to stop reviewing commits from. 
+**END_COMMIT** The ending commit hash, branch, or tag to stop reviewing commits
+ from.
 
 ## Example
 
