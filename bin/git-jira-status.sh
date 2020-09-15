@@ -16,10 +16,12 @@
 # Example:
 #  git-jira-status.sh EXAM 2.4.2 HEAD
 
+# shellcheck source=/dev/null
 . "$(git --exec-path)/git-sh-setup"
 
 set -euo pipefail
 
+# shellcheck disable=SC2034
 USAGE="[-hrs] PROJ_CODE START_REF END_REF"
 
 REVERSE_OUTPUT=0
@@ -27,14 +29,14 @@ STRIP_COLORS=0
 
 while getopts ":hrs" opt; do
   case ${opt} in
-    r )
+    r)
       REVERSE_OUTPUT=1
       ;;
-    s )
+    s)
       STRIP_COLORS=1
       ;;
 
-    h )
+    h)
       echo 'Usage:'
       echo '  git jira-status [-hrs] PROJ_CODE START_REF END_REF'
       echo '    PROJ_CODE   The Jira project code.'
@@ -45,13 +47,13 @@ while getopts ":hrs" opt; do
       echo '    -s          Strip color from output.'
       exit 0
       ;;
-    \? )
+    \?)
       echo "Invalid Option: -$OPTARG" 1>&2
       exit 1
       ;;
   esac
 done
-shift $((OPTIND -1))
+shift $((OPTIND - 1))
 
 PROJ_TOKEN=$(echo -n "${1-}" | tr '[:lower:]' '[:upper:]')
 START_REF="${2-}"
@@ -77,7 +79,7 @@ init_colors() {
   COLOR_FG_CYAN=$(tput setaf 6)
   COLOR_FG_WHITE=$(tput setaf 7)
 
-  if [ ${1} -eq 1 ]; then
+  if [ "${1}" -eq 1 ]; then
     COLOR_BOLD=''
     COLOR_RESET=''
 
@@ -105,25 +107,25 @@ init_colors() {
 
 jira_colorize_status() {
   local jira_status
-  jira_status=$(echo -n "$@" | tr '[:upper:]' '[:lower:]')
+  jira_status=$(echo -n "$*" | tr '[:upper:]' '[:lower:]')
   case $jira_status in
     new | discovery | 'story approval')
-      echo -n "${COLOR_FG_RED}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_RED}$*${COLOR_RESET}"
       ;;
     reopened | ready | 'in progress')
-      echo -n "${COLOR_FG_MAGENTA}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_MAGENTA}$*${COLOR_RESET}"
       ;;
     'ready for review' | 'code review' | 'ready for qa' | qa)
-      echo -n "${COLOR_FG_CYAN}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_CYAN}$*${COLOR_RESET}"
       ;;
     'uat release queue')
-      echo -n "${COLOR_BOLD}${COLOR_FG_YELLOW}$@${COLOR_RESET}"
+      echo -n "${COLOR_BOLD}${COLOR_FG_YELLOW}$*${COLOR_RESET}"
       ;;
     'ready for uat' | uat)
-      echo -n "${COLOR_FG_BLUE}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_BLUE}$*${COLOR_RESET}"
       ;;
     'prod release queue' | 'done')
-      echo -n "${COLOR_BOLD}${COLOR_FG_GREEN}$@${COLOR_RESET}"
+      echo -n "${COLOR_BOLD}${COLOR_FG_GREEN}$*${COLOR_RESET}"
       ;;
     *)
       echo -n "$*"
@@ -154,7 +156,7 @@ require_project_token() {
 }
 
 require_git_refs() {
-  if [ -z "${1-}" ] || [ -z "${2-}" ];then
+  if [ -z "${1-}" ] || [ -z "${2-}" ]; then
     echo 'Must be given a start ref and end ref.' >&2
     echo >&2
     usage
@@ -196,9 +198,9 @@ jira_get_issue_status() {
   jira_id="${1}"
   ticket_summary=$(jira i "${jira_id}")
 
-  jira_status=$(echo -n "${ticket_summary}" | \
-    sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' | \
-                                      awk -F '[[:space:]][[:space:]]+' '//{print $3}')
+  jira_status=$(echo -n "${ticket_summary}" |
+    sed -E -e "s,$(printf '\033')\\[[0-9;]*[a-zA-Z],,g" -e '/^[ ]*Status/!d' |
+    awk -F '[[:space:]][[:space:]]+' '//{print $3}')
   echo -n "${jira_status}"
 }
 

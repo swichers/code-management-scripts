@@ -28,6 +28,7 @@
 # Example:
 #  git-overlap.sh develop feature/my-new-feature
 
+# shellcheck source=/dev/null
 . "$(git --exec-path)/git-sh-setup"
 
 set -euo pipefail
@@ -43,6 +44,7 @@ readonly COLOR_FG_YELLOW
 
 require_work_tree
 
+# shellcheck disable=SC2034
 USAGE="START_REF END_REF"
 if [[ -z "${1-}" ]] || [[ -z "${2-}" ]]; then
   usage
@@ -67,13 +69,13 @@ echo "${COMMITS[@]}" | indent
 echo
 echo
 
-for (( index = 0; index < $(($LEN-1)); index ++ )); do
+for ((index = 0; index < (LEN - 1); index++)); do
   declare -a DEPENDS_ON=()
-  CURRENT="${COMMITS[ $index ]}"
+  CURRENT="${COMMITS[$index]}"
 
   echo -n "Parent ${COLOR_BOLD}${COLOR_FG_YELLOW}${CURRENT}${COLOR_RESET} -> "
 
-  for (( child_index = $(($index + 1)); child_index < $LEN; child_index ++ )); do
+  for ((child_index = (index + 1); child_index < LEN; child_index++)); do
     CURRENT_CHILD="${COMMITS[$child_index]}"
     echo -n "${CURRENT_CHILD} "
 
