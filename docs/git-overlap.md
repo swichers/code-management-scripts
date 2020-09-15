@@ -1,9 +1,9 @@
 # git-overlap
 
-Checks the provided commit range to determine which commits modify files that
-were modified in an earlier commit. This is a very shallow check which does not
-account for functional or thematic dependencies. It should be considered a
-starting point for further investigation.
+Checks the provided commit range to determine which commits modify the same
+files that are also modified in earlier commits. This is a very shallow check
+which does not account for functional or thematic dependencies. It is a starting
+point for further investigation.
 
 e.g.
 * Commit 1
