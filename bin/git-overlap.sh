@@ -28,6 +28,7 @@
 # Example:
 #  git-overlap.sh develop feature/my-new-feature
 
+# shellcheck source=/dev/null
 . "$(git --exec-path)/git-sh-setup"
 
 set -euo pipefail

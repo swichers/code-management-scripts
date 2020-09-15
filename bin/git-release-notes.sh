@@ -8,6 +8,7 @@
 # Example:
 #  git-release-notes.sh develop release/2.4.2
 
+# shellcheck source=/dev/null
 . "$(git --exec-path)/git-sh-setup"
 
 set -euo pipefail

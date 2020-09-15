@@ -16,6 +16,7 @@
 # Example:
 #  git-jira-status.sh EXAM 2.4.2 HEAD
 
+# shellcheck source=/dev/null
 . "$(git --exec-path)/git-sh-setup"
 
 set -euo pipefail
@@ -106,25 +107,25 @@ init_colors() {
 
 jira_colorize_status() {
   local jira_status
-  jira_status=$(echo -n "$@" | tr '[:upper:]' '[:lower:]')
+  jira_status=$(echo -n "$*" | tr '[:upper:]' '[:lower:]')
   case $jira_status in
     new | discovery | 'story approval')
-      echo -n "${COLOR_FG_RED}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_RED}$*${COLOR_RESET}"
       ;;
     reopened | ready | 'in progress')
-      echo -n "${COLOR_FG_MAGENTA}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_MAGENTA}$*${COLOR_RESET}"
       ;;
     'ready for review' | 'code review' | 'ready for qa' | qa)
-      echo -n "${COLOR_FG_CYAN}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_CYAN}$*${COLOR_RESET}"
       ;;
     'uat release queue')
-      echo -n "${COLOR_BOLD}${COLOR_FG_YELLOW}$@${COLOR_RESET}"
+      echo -n "${COLOR_BOLD}${COLOR_FG_YELLOW}$*${COLOR_RESET}"
       ;;
     'ready for uat' | uat)
-      echo -n "${COLOR_FG_BLUE}$@${COLOR_RESET}"
+      echo -n "${COLOR_FG_BLUE}$*${COLOR_RESET}"
       ;;
     'prod release queue' | 'done')
-      echo -n "${COLOR_BOLD}${COLOR_FG_GREEN}$@${COLOR_RESET}"
+      echo -n "${COLOR_BOLD}${COLOR_FG_GREEN}$*${COLOR_RESET}"
       ;;
     *)
       echo -n "$*"
