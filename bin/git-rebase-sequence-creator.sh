@@ -83,6 +83,7 @@ fi
 # TODO: Need to make this configurable out of script.
 EXCLUDED_STATUSES=()
 EXCLUDED_STATUSES+=('Code Review')
+EXCLUDED_STATUSES+=('Discovery')
 EXCLUDED_STATUSES+=('In Progress')
 EXCLUDED_STATUSES+=('New')
 EXCLUDED_STATUSES+=('QA')
