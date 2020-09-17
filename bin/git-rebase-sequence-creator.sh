@@ -19,40 +19,35 @@ SEQUENCE_FILE=${@: -1}
 
 usage() {
   echo 'Usage:'
-  echo '  git-rebase-sequence-creator [-hs] -t PROJ_CODE -t TYPE -c START_REF'
-  printf "    %-20s %s\n" 'PROJ_CODE' 'The Jira project code.'
-  printf "    %-20s %s\n" 'START_REF' 'The starting Git reference.'
-  printf "    %-20s %s\n" 'TYPE' 'The release type. One of UAT or LIVE.'
+  echo '  git-rebase-sequence-creator [-hs] [-f TICKET,TICKET] -t PROJ_CODE -t TYPE -c START_REF'
+  printf "    %-20s %s\n" '-t PROJ_CODE' 'The Jira project code.'
+  printf "    %-20s %s\n" '-c START_REF' 'The starting Git reference.'
+  printf "    %-20s %s\n" '-t TYPE' 'The release type. One of UAT or LIVE.'
+  printf "    %-20s %s\n" '-f' 'A comma separated list of tickets to force inclusion of regardless of status.'
   printf "    %-20s %s\n" '-s' 'Strip color from output.'
   printf "    %-20s %s\n" '-h' 'Display this help message.'
 }
 
-while [ "${1:-}" != "" ]; do
-  case $1 in
-    -s | --strip-colors)
-      STRIP_COLORS=1
-      ;;
-    -t | --release-type)
-      shift
-      RELEASE_TYPE=$1
-      ;;
-    -c | --commit)
-      shift
-      START_COMMIT=$1
-      ;;
-    -p | --project)
-      shift
-      PROJECT_CODE=$1
-      ;;
-
-    -h | --help)
+while getopts "sht:c:p:f:" opt; do
+  case "${opt}" in
+    h)
       usage
       exit 0
       ;;
-
+    s) STRIP_COLORS=1 ;;
+    t) RELEASE_TYPE="${OPTARG}" ;;
+    c) START_COMMIT="${OPTARG}" ;;
+    p) PROJECT_CODE="${OPTARG}" ;;
+    f) FORCED_TICKETS="${OPTARG}" ;;
+    :)
+      echo "Invalid option: ${OPTARG} requires an argument" 1>&2
+      usage
+      exit 1
+      ;;
   esac
-  shift
 done
+
+shift "$(($OPTIND - 1))"
 
 . "${SCRIPT_DIR}/colors.sh" ${STRIP_COLORS:-0}
 
@@ -64,6 +59,52 @@ header() {
   echo
   echo "${COLOR_FG_YELLOW}${1}${COLOR_RESET}"
   echo
+}
+
+continue() {
+  echo
+  read -p "Continue? [Yn] " -n 1 -r
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo
+    err 'Aborted.'
+    exit 1
+  fi
+  echo
+}
+
+tolower() {
+  echo "$@" | tr '[:upper:]' '[:lower:]'
+}
+
+get_statuses() {
+  "${SCRIPT_DIR}/git-jira-status.sh" -rs "${1}" "${2}" 2> /dev/null
+}
+
+get_status_regex() {
+  local PIPED_EXCLUSIONS
+  local STATUS_REGEX
+  local AWK_REGEX
+
+  # Combine our list so we can use it as part of a regex.
+  printf -v PIPED_EXCLUSIONS '%s|' "$@"
+  printf -v STATUS_REGEX '(%s)\)$' "${PIPED_EXCLUSIONS%?}"
+  printf -v AWK_REGEX '!/(%s)/' "${STATUS_REGEX}"
+
+  echo "${AWK_REGEX}"
+}
+
+filter_statuses() {
+  local AWK_REGEX
+  local FORCED_TICKETS
+
+  AWK_REGEX=$(tolower "${2}")
+  FORCED_TICKETS="${3}"
+
+  if [ ! -z "${FORCED_TICKETS}" ]; then
+    printf -v AWK_REGEX '%s || /(%s)/' "${AWK_REGEX}" $(tolower "${FORCED_TICKETS}" | tr ',' '|')
+  fi
+
+  echo "${1}" | awk "{original=\$0;\$0=tolower(\$0)} ${AWK_REGEX} {print original}"
 }
 
 if [[ "${RELEASE_TYPE:-}" != 'UAT' && "${RELEASE_TYPE:-}" != 'LIVE' ]]; then
@@ -101,33 +142,33 @@ fi
 
 header 'Filtering statuses.'
 echo "Filtering for release of type ${COLOR_BOLD}${RELEASE_TYPE}${COLOR_RESET}."
+echo
 echo 'Tickets with these statuses will be removed:'
 printf '  %s\n' "${EXCLUDED_STATUSES[@]}"
 
+if [ ! -z "${FORCED_TICKETS}" ]; then
+  echo
+  echo 'These tickets will be included no matter what:'
+  echo "  ${FORCED_TICKETS}"
+fi
+
 header 'Checking Jira statuses (this can take a while).'
 
-# Combine our list so we can use it as part of a regex.
-printf -v GREP_EXCLUSIONS '%s|' "${EXCLUDED_STATUSES[@]}"
-printf -v GREP_REGEX '(%s)\)$' "${GREP_EXCLUSIONS%?}"
-
-FILTERED_COMMITS=$("${SCRIPT_DIR}/git-jira-status.sh" -rs "${PROJECT_CODE}" "${START_COMMIT}" 2> /dev/null | { egrep -vi "${GREP_REGEX}" || test $? = 1; })
+FILTERED_COMMITS=$(filter_statuses \
+  "$(get_statuses "${PROJECT_CODE}" "${START_COMMIT}")" \
+  "$(get_status_regex "${EXCLUDED_STATUSES[@]}")" \
+  "${FORCED_TICKETS:-}")
 
 header 'Filtered list.'
-printf '%s\n' "${FILTERED_COMMITS:-}"
 
 if [ -z "${FILTERED_COMMITS}" ]; then
   err 'No filtered commits. Check your starting commit and release type.'
   exit 1
 fi
 
-read -p "Continue? [Yn] " -n 1 -r
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo
-  err 'Aborted.'
-  exit 1
-fi
-
-echo "${FILTERED_COMMITS:-noop}" | sed -e 's/^/pick /' > "${SEQUENCE_FILE}"
+echo "${FILTERED_COMMITS}"
+continue
+echo "${FILTERED_COMMITS}" | awk '{print "pick " $0}' > "${SEQUENCE_FILE}"
 echo
 
 exit 0

@@ -12,7 +12,7 @@ This will filter commits from one branch into another based on their Jira issue 
 ## Usage
 
 ```sh
-git create-release [-hs] -p PROJECT_CODE -b BASE_BRANCH -t RELEASE_TYPE -c START_COMMIT -v RELEASE_VERSION
+git create-release [-hs] [-f TICKETS] -p PROJECT_CODE -b BASE_BRANCH -t RELEASE_TYPE -c START_COMMIT -v RELEASE_VERSION
 ```
 
 **-h** Show help.
@@ -29,3 +29,4 @@ git create-release [-hs] -p PROJECT_CODE -b BASE_BRANCH -t RELEASE_TYPE -c START
 
 **-v** The semantic release version, such as 1.20.3. This will be used to construct the final release branch, such as `release/1.20.3`
 
+**-f** A comma separated list of Jira tickets to include regardless of their status. This can be used to fast track tickets ahead of schedule, such as for a hotfix.

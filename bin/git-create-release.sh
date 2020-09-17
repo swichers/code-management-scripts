@@ -3,8 +3,9 @@
 # Eases creation of a release branch based on Jira ticket statuses.
 
 SUBDIRECTORY_OK=Yes
-USAGE="-t <type> -c <commit> -v <release version> -b <base branch>
+USAGE="-p <project code> -b <base branch> -t <type> -c <commit> -v <release version>
 
+Project code should be the Jira project code.
 Type should be one of UAT or LIVE.
 Commit should be the starting commit for reviewing Jira status.
 Release version should be the semantic version number for the release.
@@ -16,44 +17,28 @@ require_clean_work_tree create-release "There are changes that should be stashed
 
 set -euo pipefail
 
-while [ "${1:-}" != "" ]; do
-  case $1 in
-    -s | --strip-colors)
-      STRIP_COLORS=1
-      ;;
-    -t | --release-type)
-      shift
-      RELEASE_TYPE=$1
-      ;;
-    -c | --commit)
-      shift
-      START_COMMIT=$1
-      ;;
-    -v | --release-version)
-      shift
-      RELEASE_VERSION=$1
-      ;;
-    -b | --branch)
-      shift
-      BASE_BRANCH=$1
-      ;;
-    -p | --project)
-      shift
-      PROJECT_CODE=$1
-      ;;
-
-    -h | --help)
+while getopts "sht:c:p:f:v:b:" opt; do
+  case "${opt}" in
+    h)
       usage
-      exit
+      exit 0
       ;;
-
-    *)
+    s) STRIP_COLORS=1 ;;
+    t) RELEASE_TYPE="${OPTARG}" ;;
+    c) START_COMMIT="${OPTARG}" ;;
+    p) PROJECT_CODE="${OPTARG}" ;;
+    f) FORCED_TICKETS="${OPTARG}" ;;
+    v) RELEASE_VERSION="${OPTARG}" ;;
+    b) BASE_BRANCH="${OPTARG}" ;;
+    :)
+      echo "Invalid option: ${OPTARG} requires an argument" 1>&2
       usage
       exit 1
       ;;
   esac
-  shift
 done
+
+shift "$(($OPTIND - 1))"
 
 RELEASE_BRANCH="release/${RELEASE_VERSION:-}"
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
@@ -106,6 +91,10 @@ git checkout -b "${RELEASE_BRANCH}"
 
 header 'Creating rebase sequence.'
 
-GIT_SEQUENCE_EDITOR="${SCRIPT_DIR}/git-rebase-sequence-creator.sh -p ${PROJECT_CODE} -t ${RELEASE_TYPE} -c ${START_COMMIT}" git rebase "${START_COMMIT}" -i
+GIT_SEQUENCE_EDITOR="${SCRIPT_DIR}/git-rebase-sequence-creator.sh \
+  -p '${PROJECT_CODE}' \
+  -t '${RELEASE_TYPE}' \
+  -c '${START_COMMIT}' \
+  -f '${FORCED_TICKETS:-}'" git rebase "${START_COMMIT}" -i
 
 exit 0
