@@ -30,3 +30,5 @@ git create-release [-hs] [-f TICKETS] -p PROJECT_CODE -b BASE_BRANCH -t RELEASE_
 **-v** The semantic release version, such as 1.20.3. This will be used to construct the final release branch, such as `release/1.20.3`
 
 **-f** A comma separated list of Jira tickets to include regardless of their status. This can be used to fast track tickets ahead of schedule, such as for a hotfix.
+
+**-e** A comma separated list of Jira tickets to exclude regardless of their status. This can be used to ignore commits that were given the wrong Jira ticket ID.

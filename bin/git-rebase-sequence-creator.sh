@@ -19,16 +19,17 @@ SEQUENCE_FILE=${@: -1}
 
 usage() {
   echo 'Usage:'
-  echo '  git-rebase-sequence-creator [-hs] [-f TICKET,TICKET] -t PROJ_CODE -t TYPE -c START_REF'
+  echo '  git-rebase-sequence-creator [-hs] [-f TICKET,TICKET] [-e TICKET,TICKET] -t PROJ_CODE -t TYPE -c START_REF'
   printf "    %-20s %s\n" '-t PROJ_CODE' 'The Jira project code.'
   printf "    %-20s %s\n" '-c START_REF' 'The starting Git reference.'
   printf "    %-20s %s\n" '-t TYPE' 'The release type. One of UAT or LIVE.'
+  printf "    %-20s %s\n" '-e' 'A comma separated list of tickets to force exclusion of regardless of status.'
   printf "    %-20s %s\n" '-f' 'A comma separated list of tickets to force inclusion of regardless of status.'
   printf "    %-20s %s\n" '-s' 'Strip color from output.'
   printf "    %-20s %s\n" '-h' 'Display this help message.'
 }
 
-while getopts "sht:c:p:f:" opt; do
+while getopts "sht:c:p:f:e:" opt; do
   case "${opt}" in
     h)
       usage
@@ -38,6 +39,7 @@ while getopts "sht:c:p:f:" opt; do
     t) RELEASE_TYPE="${OPTARG}" ;;
     c) START_COMMIT="${OPTARG}" ;;
     p) PROJECT_CODE="${OPTARG}" ;;
+    e) EXCLUDED_TICKETS="${OPTARG}" ;;
     f) FORCED_TICKETS="${OPTARG}" ;;
     :)
       echo "Invalid option: ${OPTARG} requires an argument" 1>&2
@@ -93,6 +95,25 @@ get_status_regex() {
   echo "${AWK_REGEX}"
 }
 
+case_insensitive_awk() {
+  echo "${2}" | awk "{original=\$0;\$0=tolower(\$0)} ${1} {print original}"
+}
+
+exclude_tickets() {
+  local EXCLUDED_TICKETS
+  local AWK_REGEX
+
+  EXCLUDED_TICKETS="${2}"
+
+  if [ ! -z "${EXCLUDED_TICKETS}" ]; then
+    printf -v AWK_REGEX '!/(%s)/' $(tolower "${EXCLUDED_TICKETS}" | tr ',' '|')
+
+    case_insensitive_awk "${AWK_REGEX}" "${1}"
+  else
+    echo "${1}"
+  fi
+}
+
 filter_statuses() {
   local AWK_REGEX
   local FORCED_TICKETS
@@ -104,7 +125,7 @@ filter_statuses() {
     printf -v AWK_REGEX '%s || /(%s)/' "${AWK_REGEX}" $(tolower "${FORCED_TICKETS}" | tr ',' '|')
   fi
 
-  echo "${1}" | awk "{original=\$0;\$0=tolower(\$0)} ${AWK_REGEX} {print original}"
+  case_insensitive_awk "${AWK_REGEX}" "${1}"
 }
 
 if [[ "${RELEASE_TYPE:-}" != 'UAT' && "${RELEASE_TYPE:-}" != 'LIVE' ]]; then
@@ -146,9 +167,15 @@ echo
 echo 'Tickets with these statuses will be removed:'
 printf '  %s\n' "${EXCLUDED_STATUSES[@]}"
 
+if [ ! -z "${EXCLUDED_TICKETS}" ]; then
+  echo
+  echo "These tickets will be ${COLOR_BOLD}excluded${COLOR_RESET} no matter what:"
+  echo "  ${EXCLUDED_TICKETS}"
+fi
+
 if [ ! -z "${FORCED_TICKETS}" ]; then
   echo
-  echo 'These tickets will be included no matter what:'
+  echo "These tickets will be ${COLOR_BOLD}included${COLOR_RESET} no matter what:"
   echo "  ${FORCED_TICKETS}"
 fi
 
@@ -159,10 +186,12 @@ FILTERED_COMMITS=$(filter_statuses \
   "$(get_status_regex "${EXCLUDED_STATUSES[@]}")" \
   "${FORCED_TICKETS:-}")
 
+FILTERED_COMMITS=$(exclude_tickets "${FILTERED_COMMITS}" "${EXCLUDED_TICKETS:-}")
+
 header 'Filtered list.'
 
 if [ -z "${FILTERED_COMMITS}" ]; then
-  err 'No filtered commits. Check your starting commit and release type.'
+  err 'No allowed commits. Check your starting commit and release type.'
   exit 1
 fi
 

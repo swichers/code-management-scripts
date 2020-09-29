@@ -3,13 +3,15 @@
 # Eases creation of a release branch based on Jira ticket statuses.
 
 SUBDIRECTORY_OK=Yes
-USAGE="-p <project code> -b <base branch> -t <type> -c <commit> -v <release version>
+USAGE="-p <project code> -b <base branch> -t <type> -c <commit> -v <release version> -e <excluded jira ticket ids> -f <forced included jira ticket ids>
 
 Project code should be the Jira project code.
 Type should be one of UAT or LIVE.
 Commit should be the starting commit for reviewing Jira status.
 Release version should be the semantic version number for the release.
-Base branch should be the starting branch."
+Base branch should be the starting branch.
+Jira ticket IDs should be a comma separated list of tickets to include or exclude. EXAM-123,EXAM-456
+"
 
 . $(git --exec-path)/git-sh-setup
 
@@ -17,7 +19,7 @@ require_clean_work_tree create-release "There are changes that should be stashed
 
 set -euo pipefail
 
-while getopts "sht:c:p:f:v:b:" opt; do
+while getopts "sht:c:p:f:v:b:e:" opt; do
   case "${opt}" in
     h)
       usage
@@ -28,6 +30,7 @@ while getopts "sht:c:p:f:v:b:" opt; do
     c) START_COMMIT="${OPTARG}" ;;
     p) PROJECT_CODE="${OPTARG}" ;;
     f) FORCED_TICKETS="${OPTARG}" ;;
+    e) EXCLUDED_TICKETS="${OPTARG}" ;;
     v) RELEASE_VERSION="${OPTARG}" ;;
     b) BASE_BRANCH="${OPTARG}" ;;
     :)
@@ -95,6 +98,8 @@ GIT_SEQUENCE_EDITOR="${SCRIPT_DIR}/git-rebase-sequence-creator.sh \
   -p '${PROJECT_CODE}' \
   -t '${RELEASE_TYPE}' \
   -c '${START_COMMIT}' \
-  -f '${FORCED_TICKETS:-}'" git rebase "${START_COMMIT}" -i
+  -f '${FORCED_TICKETS:-}' \
+  -e '${EXCLUDED_TICKETS:-}'" \
+  git rebase "${START_COMMIT}" -i
 
 exit 0
