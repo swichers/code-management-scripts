@@ -6,7 +6,7 @@ SUBDIRECTORY_OK=Yes
 USAGE="-p <project code> -b <base branch> -t <type> -c <commit> -v <release version> -e <excluded jira ticket ids> -f <forced included jira ticket ids>
 
 Project code should be the Jira project code.
-Type should be one of UAT or LIVE.
+Type should be one of UAT or LIVE. Defaults to LIVE. If not provided a release version with '-beta' in it will set this to UAT.
 Commit should be the starting commit for reviewing Jira status.
 Release version should be the semantic version number for the release.
 Base branch should be the starting branch.
@@ -58,8 +58,22 @@ header() {
   echo
 }
 
+info() {
+    echo "${COLOR_FG_CYAN}${COLOR_BOLD}${1}${COLOR_RESET}"
+}
+
 echo "${COLOR_BG_RED}${COLOR_FG_WHITE}${COLOR_BOLD}BETA${COLOR_RESET} ${COLOR_FG_YELLOW}Release branch creator. ${COLOR_BG_RED}${COLOR_FG_WHITE}${COLOR_BOLD}BETA${COLOR_RESET}"
 echo
+
+if [[ -z "${RELEASE_TYPE:-}" ]]; then
+  RELEASE_TYPE='LIVE'
+  if [[ "${RELEASE_VERSION}" == *'-beta'* ]]; then
+    RELEASE_TYPE='UAT'
+  fi
+  echo
+  info "Automatically set release type to: ${RELEASE_TYPE}."
+  echo
+fi
 
 if [[ "${RELEASE_TYPE:-}" != 'UAT' && "${RELEASE_TYPE:-}" != 'LIVE' ]]; then
   err "Release type must be one of: UAT, LIVE."
